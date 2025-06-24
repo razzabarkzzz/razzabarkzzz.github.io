@@ -299,7 +299,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- DOM Elements ---
@@ -333,7 +333,7 @@
         let currentAction = null;
         let currentActionTarget = null;
         
-     const firebaseConfig = {
+        const firebaseConfig = {
   apiKey: "AIzaSyDUh9par8PkZQhdlB7BD9quPVtxU9Yvptc",
   authDomain: "brc-tracker.firebaseapp.com",
   projectId: "brc-tracker",
@@ -341,7 +341,7 @@
   messagingSenderId: "511864875909",
   appId: "1:511864875909:web:07313a9d007ddeee79b2ec"
 };
-        // IMPORTANT: PASTE YOUR GEMINI API KEY HERE
+        // --- IMPORTANT: PASTE YOUR GEMINI API KEY HERE ---
         const geminiApiKey = "";
 
         // --- Gemini API Function ---
@@ -370,12 +370,14 @@
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     userId = user.uid; isAuthReady = true;
+                    console.log("Firebase Auth Success. User ID:", userId);
                     if (userIdDisplay) userIdDisplay.textContent = userId;
                     listenForShifts();
                 } else {
-                    try {
+                     try {
+                        console.log("No user found, signing in anonymously...");
                         await signInAnonymously(auth);
-                    } catch (error) { console.error("Sign-in failed:", error); }
+                    } catch (error) { console.error("Anonymous sign-in failed:", error); }
                 }
             });
         } catch (e) { console.error("Firebase initialization failed:", e); }
@@ -507,7 +509,8 @@
                 showConfirmModal(async () => {
                      if (!isAuthReady || !userId || !shiftId) return;
                      try {
-                         await deleteDoc(doc(db, `users/${userId}/shifts`, shiftId));
+                         const collectionPath = `users/${userId}/shifts`;
+                         await deleteDoc(doc(db, collectionPath, shiftId));
                      } catch(error) { console.error("Error deleting shift:", error); }
                 }, null, 'Delete Shift?', 'Are you sure you want to permanently delete this shift log?');
             }
@@ -523,7 +526,11 @@
             
             const totalItems = visibleTallies.reduce((sum, key) => sum + counts[key], 0);
 
-            if (!isAuthReady || !userId) { console.error("Auth not ready."); return; }
+            if (!isAuthReady || !userId) { 
+                console.error("Auth not ready. Cannot log shift.");
+                alert("Cannot connect to the database. Please try again in a moment.");
+                return; 
+            }
             if (totalItems === 0) return;
             
             const notes = shiftNotesInput.value.trim();
@@ -548,7 +555,10 @@
                 Object.keys(counts).forEach(key => counts[key] = 0); 
                 shiftNotesInput.value = ''; 
                 updateCounters();
-            } catch (error) { console.error("Error logging shift:", error); }
+            } catch (error) { 
+                console.error("Error logging shift:", error); 
+                alert("Failed to log shift. Please check console for errors.");
+            }
         });
 
         // --- Core Functions ---
