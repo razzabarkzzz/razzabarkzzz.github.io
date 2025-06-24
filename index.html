@@ -337,12 +337,7 @@
         let currentAction = null;
         let currentActionTarget = null;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'boot-tracker-default';
-       // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-const firebaseConfig = {
+        const firebaseConfig = {
   apiKey: "AIzaSyDUh9par8PkZQhdlB7BD9quPVtxU9Yvptc",
   authDomain: "brc-tracker.firebaseapp.com",
   projectId: "brc-tracker",
@@ -350,8 +345,6 @@ const firebaseConfig = {
   messagingSenderId: "511864875909",
   appId: "1:511864875909:web:07313a9d007ddeee79b2ec"
 };
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
 
         // --- Gemini API Function ---
         async function callGemini(prompt, elementToUpdate) {
