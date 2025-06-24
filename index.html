@@ -440,7 +440,8 @@
         cancelActionBtn.addEventListener('click', () => { currentAction = null; currentActionTarget = null; confirmModal.classList.add('hidden'); });
 
         // --- Event Listeners ---
-        loginForm.addEventListener('submit', (e) => { e.preventDefault(); const n = firstNameInput.value.trim(); if(n){localStorage.setItem('shoeTrackerUser', n); localStorage.removeItem('streakData'); localStorage.removeItem('monthData'); localStorage.removeItem('badgeTotals'); launchApp(n);} });
+        loginForm.addEventListener('submit', (e) => { e.preventDefault(); 
+const n = firstNameInput.value.trim(); if(n){localStorage.setItem('shoeTrackerUser', n); localStorage.removeItem('streakData'); localStorage.removeItem('monthData'); localStorage.removeItem('badgeTotals'); launchApp(n);} });
         continueToAppBtn.addEventListener('click', initializeAppScreen);
         changeNotesBtn.addEventListener('click', () => showScreen(changeNotesScreen));
         backToLoginBtn.addEventListener('click', () => showScreen(loginScreen));
