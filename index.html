@@ -332,9 +332,8 @@
         let lifetimeTotals = {};
         let currentAction = null;
         let currentActionTarget = null;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'boot-tracker-default';
         
-const firebaseConfig = {
+     const firebaseConfig = {
   apiKey: "AIzaSyDUh9par8PkZQhdlB7BD9quPVtxU9Yvptc",
   authDomain: "brc-tracker.firebaseapp.com",
   projectId: "brc-tracker",
@@ -342,12 +341,13 @@ const firebaseConfig = {
   messagingSenderId: "511864875909",
   appId: "1:511864875909:web:07313a9d007ddeee79b2ec"
 };
+        // IMPORTANT: PASTE YOUR GEMINI API KEY HERE
+        const geminiApiKey = "";
 
         // --- Gemini API Function ---
         async function callGemini(prompt, elementToUpdate) {
             if (elementToUpdate) elementToUpdate.innerHTML = '<span class="text-gray-500">Generating...</span>';
-            const apiKey = ""; 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`;
             const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
 
             try {
@@ -374,8 +374,7 @@ const firebaseConfig = {
                     listenForShifts();
                 } else {
                     try {
-                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
-                        else await signInAnonymously(auth);
+                        await signInAnonymously(auth);
                     } catch (error) { console.error("Sign-in failed:", error); }
                 }
             });
