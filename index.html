@@ -87,17 +87,13 @@
                  <button id="backToLoginBtn" class="mt-2 text-indigo-600 hover:text-indigo-800 transition">← Back to Login</button>
             </header>
             <div id="changeNotesList" class="space-y-4 max-h-[70vh] overflow-y-auto pr-4">
-                <div class="border-b pb-4">
-                    <p class="font-semibold text-gray-800">Added Task-Specific Badges</p>
-                    <p class="text-sm text-gray-600">Added a "Badges" tab to the Achievements page. Users can now earn a badge for completing 500 of each specific task.</p>
+                 <div class="border-b pb-4">
+                    <p class="font-semibold text-gray-800">Deployment Bug Fix</p>
+                    <p class="text-sm text-gray-600">Corrected database paths and security rules to ensure all features work on a live web server.</p>
                 </div>
                  <div class="border-b pb-4">
-                     <p class="font-semibold text-gray-800">Restructured Achievements Page</p>
-                     <p class="text-sm text-gray-600">The Achievements page now has submenus for "Achievements" and "Badges" to better organize rewards.</p>
-                 </div>
-                 <div class="border-b pb-4">
-                     <p class="font-semibold text-gray-800">Added Shift Deletion</p>
-                     <p class="text-sm text-gray-600">Users can now delete logged shifts from the history via a confirmation pop-up.</p>
+                     <p class="font-semibold text-gray-800">New Badges Added</p>
+                     <p class="text-sm text-gray-600">Added a "Badges" tab to the Achievements page. Users can now earn a badge for completing 500 of each specific task.</p>
                  </div>
             </div>
         </div>
@@ -337,7 +333,8 @@
         let currentAction = null;
         let currentActionTarget = null;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'boot-tracker-default';
-        const firebaseConfig = {
+        
+const firebaseConfig = {
   apiKey: "AIzaSyDUh9par8PkZQhdlB7BD9quPVtxU9Yvptc",
   authDomain: "brc-tracker.firebaseapp.com",
   projectId: "brc-tracker",
@@ -440,8 +437,7 @@
         cancelActionBtn.addEventListener('click', () => { currentAction = null; currentActionTarget = null; confirmModal.classList.add('hidden'); });
 
         // --- Event Listeners ---
-        loginForm.addEventListener('submit', (e) => { e.preventDefault(); 
-const n = firstNameInput.value.trim(); if(n){localStorage.setItem('shoeTrackerUser', n); localStorage.removeItem('streakData'); localStorage.removeItem('monthData'); localStorage.removeItem('badgeTotals'); launchApp(n);} });
+        loginForm.addEventListener('submit', (e) => { e.preventDefault(); const n = firstNameInput.value.trim(); if(n){localStorage.setItem('shoeTrackerUser', n); localStorage.removeItem('streakData'); localStorage.removeItem('monthData'); localStorage.removeItem('badgeTotals'); launchApp(n);} });
         continueToAppBtn.addEventListener('click', initializeAppScreen);
         changeNotesBtn.addEventListener('click', () => showScreen(changeNotesScreen));
         backToLoginBtn.addEventListener('click', () => showScreen(loginScreen));
@@ -512,7 +508,7 @@ const n = firstNameInput.value.trim(); if(n){localStorage.setItem('shoeTrackerUs
                 showConfirmModal(async () => {
                      if (!isAuthReady || !userId || !shiftId) return;
                      try {
-                         await deleteDoc(doc(db, `artifacts/${appId}/users/${userId}/shifts`, shiftId));
+                         await deleteDoc(doc(db, `users/${userId}/shifts`, shiftId));
                      } catch(error) { console.error("Error deleting shift:", error); }
                 }, null, 'Delete Shift?', 'Are you sure you want to permanently delete this shift log?');
             }
@@ -547,7 +543,7 @@ const n = firstNameInput.value.trim(); if(n){localStorage.setItem('shoeTrackerUs
                 let dataToLog = { target, notes, timestamp: serverTimestamp() };
                 visibleTallies.forEach(key => dataToLog[key] = counts[key]);
 
-                const collectionPath = `artifacts/${appId}/users/${userId}/shifts`;
+                const collectionPath = `users/${userId}/shifts`;
                 await addDoc(collection(db, collectionPath), dataToLog);
                 
                 Object.keys(counts).forEach(key => counts[key] = 0); 
@@ -698,7 +694,7 @@ const n = firstNameInput.value.trim(); if(n){localStorage.setItem('shoeTrackerUs
         // --- History Logic ---
         function listenForShifts() {
             if (!isAuthReady || !userId) return;
-            const collectionPath = `artifacts/${appId}/users/${userId}/shifts`;
+            const collectionPath = `users/${userId}/shifts`;
             const q = query(collection(db, collectionPath));
             onSnapshot(q, (snapshot) => {
                 allShifts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
